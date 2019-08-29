@@ -5,14 +5,22 @@ import (
 	"strings"
 )
 
-func AppendUniqueUint64(slice []uint64, i uint64) []uint64 {
-	for _, el := range slice {
-		if el == i {
-			return slice
-		}
-	}
-	return append(slice, i)
-}
+// uint8
+// uint16
+// uint32
+// uint64
+// int8
+// int16
+// int32
+// int64
+// float32
+// float64
+// string
+// int
+// uint
+// uintptr
+// byte
+// rune
 
 func ExistsInArrayString(value string, slice []string) bool {
 	for _, item := range slice {
@@ -22,33 +30,6 @@ func ExistsInArrayString(value string, slice []string) bool {
 	}
 
 	return false
-}
-
-func AppendUniqueInt(slice []int, i int) []int {
-	for _, el := range slice {
-		if el == i {
-			return slice
-		}
-	}
-	return append(slice, i)
-}
-
-func AppendUniqueInt64(slice []int64, i int64) []int64 {
-	for _, el := range slice {
-		if el == i {
-			return slice
-		}
-	}
-	return append(slice, i)
-}
-
-func AppendUniqueString(slice []string, i string) []string {
-	for _, el := range slice {
-		if el == i {
-			return slice
-		}
-	}
-	return append(slice, i)
 }
 
 func ExistsInArrayInt(value int, slice []int) bool {
@@ -160,4 +141,245 @@ func Implode(values []interface{}, sep string) string {
 	}
 
 	return strings.Join(b, sep)
+}
+
+func AppendUniqueUint8(slice []uint8, values ...uint8) []uint8 {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueUint16(slice []uint16, values ...uint16) []uint16 {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueUint32(slice []uint32, values ...uint32) []uint32 {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueUint64(slice []uint64, values ...uint64) []uint64 {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueInt8(slice []int8, values ...int8) []int8 {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueInt16(slice []int16, values ...int16) []int16 {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueInt32(slice []int32, values ...int32) []int32 {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueInt64(slice []int64, values ...int64) []int64 {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueFloat32(slice []float32, values ...float32) []float32 {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueFloat64(slice []float64, values ...float64) []float64 {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueString(slice []string, values ...string) []string {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueInt(slice []int, values ...int) []int {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueUint(slice []uint, values ...uint) []uint {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueUintptr(slice []uintptr, values ...uintptr) []uintptr {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueByte(slice []byte, values ...byte) []byte {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
+}
+func AppendUniqueRune(slice []rune, values ...rune) []rune {
+	for _, v := range values {
+		var exists bool
+		for _, s := range slice {
+			if s == v {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			slice = append(slice, v)
+		}
+	}
+	return slice
 }
