@@ -1,6 +1,9 @@
 package gohelp
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestAppendUniqueInt(t *testing.T) {
 	var ints []int
@@ -60,4 +63,30 @@ func TestExistsInArrayInt64(t *testing.T) {
 	if exists != true {
 		t.Fatal("ExistsInArrayInt64 works incorrect")
 	}
+}
+
+func TestUniqueLeftString(t *testing.T) {
+	stringsArrayLeft := []string{"10", "20", "20", "30", "40", "40", "70"}
+	stringsArrayRight := []string{"10", "50", "70"}
+	left := UniqueLeftString(stringsArrayLeft, stringsArrayRight)
+	if len(left) != 3 {
+		t.Fatal("wrong algorithm")
+	}
+	fmt.Println(left)
+	right := UniqueLeftString(stringsArrayRight, stringsArrayLeft)
+	if len(right) != 1 {
+		t.Fatal("wrong algorithm")
+	}
+	fmt.Println(right)
+
+	fmt.Println("unique is:", append(left, right...))
+}
+
+func TestUniqueLeftInt(t *testing.T) {
+	stringsArrayLeft := []int{10, 20, 20, 30, 40, 40, 70}
+	left := UniqueLeftInt(stringsArrayLeft, []int{})
+	if len(left) != 5 {
+		t.Fatal("wrong algorithm")
+	}
+	fmt.Println(left)
 }

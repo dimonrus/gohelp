@@ -383,3 +383,260 @@ func AppendUniqueRune(slice []rune, values ...rune) []rune {
 	}
 	return slice
 }
+
+func UniqueLeftUint8(left []uint8, right []uint8) []uint8 {
+	var leftUnique = make([]uint8, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueUint8([]uint8{}, leftUnique...)
+}
+func UniqueLeftUint16(left []uint16, right []uint16) []uint16 {
+	var leftUnique = make([]uint16, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueUint16([]uint16{}, leftUnique...)
+}
+func UniqueLeftUint32(left []uint32, right []uint32) []uint32 {
+	var leftUnique = make([]uint32, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueUint32([]uint32{}, leftUnique...)
+}
+func UniqueLeftUint64(left []uint64, right []uint64) []uint64 {
+	var leftUnique = make([]uint64, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueUint64([]uint64{}, leftUnique...)
+}
+func UniqueLeftInt8(left []int8, right []int8) []int8 {
+	var leftUnique = make([]int8, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueInt8([]int8{}, leftUnique...)
+}
+func UniqueLeftInt16(left []int16, right []int16) []int16 {
+	var leftUnique = make([]int16, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueInt16([]int16{}, leftUnique...)
+}
+func UniqueLeftInt32(left []int32, right []int32) []int32 {
+	var leftUnique = make([]int32, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueInt32([]int32{}, leftUnique...)
+}
+func UniqueLeftInt64(left []int64, right []int64) []int64 {
+	var leftUnique = make([]int64, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueInt64([]int64{}, leftUnique...)
+}
+func UniqueLeftFloat32(left []float32, right []float32) []float32 {
+	var leftUnique = make([]float32, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueFloat32([]float32{}, leftUnique...)
+}
+func UniqueLeftFloat64(left []float64, right []float64) []float64 {
+	var leftUnique = make([]float64, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueFloat64([]float64{}, leftUnique...)
+}
+func UniqueLeftString(left []string, right []string) []string {
+	var leftUnique = make([]string, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueString([]string{}, leftUnique...)
+}
+func UniqueLeftInt(left []int, right []int) []int {
+	var leftUnique = make([]int, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueInt([]int{}, leftUnique...)
+}
+func UniqueLeftUint(left []uint, right []uint) []uint {
+	var leftUnique = make([]uint, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueUint([]uint{}, leftUnique...)
+}
+func UniqueLeftUintptr(left []uintptr, right []uintptr) []uintptr {
+	var leftUnique = make([]uintptr, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueUintptr([]uintptr{}, leftUnique...)
+}
+func UniqueLeftByte(left []byte, right []byte) []byte {
+	var leftUnique = make([]byte, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueByte([]byte{}, leftUnique...)
+}
+func UniqueLeftRune(left []rune, right []rune) []rune {
+	var leftUnique = make([]rune, 0)
+	for _, leftValue := range left {
+		var found bool
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				found = true
+				break
+			}
+		}
+		if !found {
+			leftUnique = append(leftUnique, leftValue)
+		}
+	}
+	return AppendUniqueRune([]rune{}, leftUnique...)
+}
