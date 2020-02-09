@@ -1,6 +1,7 @@
 package gohelp
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -52,5 +53,8 @@ func TestBeforeString(t *testing.T) {
 	if root != "user/local/go/" {
 		t.Fatal("incorrect before logic")
 	}
+}
 
+func TestColour(t *testing.T) {
+	fmt.Printf(AnsiBackgroundCustom+AnsiBlue+AnsiReversed+"%s"+AnsiReset, 90, "color blue")
 }
