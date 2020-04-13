@@ -58,3 +58,13 @@ func TestBeforeString(t *testing.T) {
 func TestColour(t *testing.T) {
 	fmt.Printf(AnsiBackgroundCustom+AnsiBlue+AnsiReversed+"%s"+AnsiReset, 90, "color blue")
 }
+
+func TestUUID_IsValid(t *testing.T) {
+	uuid := (&UUID{}).Generate()
+
+	fmt.Println(*uuid.Get())
+	isOk := uuid.IsValid()
+	if !isOk {
+		t.Fatal("Uuid is invalid")
+	}
+}
