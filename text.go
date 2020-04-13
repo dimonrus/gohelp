@@ -57,6 +57,14 @@ func (u *UUID) IsValid() bool {
 	return matchUUIDPattern.MatchString(*u.Get())
 }
 
+func ParseUUID(data string) *UUID {
+	uuid := &UUID{value:&data}
+	if uuid.IsValid() {
+		return uuid
+	}
+	return nil
+}
+
 func ToUnderscore(str string) string {
 	underscore := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
 	underscore = matchAllCap.ReplaceAllString(underscore, "${1}_${2}")
