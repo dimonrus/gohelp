@@ -42,6 +42,16 @@ func ExistsInArrayInt(value int, slice []int) bool {
 	return false
 }
 
+func ExistsInArrayInt32(value int32, slice []int32) bool {
+	for _, item := range slice {
+		if item == value {
+			return true
+		}
+	}
+
+	return false
+}
+
 func ExistsInArrayInt64(value int64, slice []int64) bool {
 	for _, item := range slice {
 		if item == value {
@@ -640,3 +650,15 @@ func UniqueLeftRune(left []rune, right []rune) []rune {
 	}
 	return AppendUniqueRune([]rune{}, leftUnique...)
 }
+
+type Int32Slice []int32
+
+func (x Int32Slice) Len() int           { return len(x) }
+func (x Int32Slice) Less(i, j int) bool { return x[i] < x[j] }
+func (x Int32Slice) Swap(i, j int)      { x[i], x[j] = x[j], x[i] }
+
+type Int64Slice []int32
+
+func (x Int64Slice) Len() int           { return len(x) }
+func (x Int64Slice) Less(i, j int) bool { return x[i] < x[j] }
+func (x Int64Slice) Swap(i, j int)      { x[i], x[j] = x[j], x[i] }
