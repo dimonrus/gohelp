@@ -9,7 +9,6 @@ func GetRndDateTime() time.Time {
 	min := time.Date(2001, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
 	max := time.Date(2018, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
 	delta := max - min
-	rand.Seed(time.Now().UTC().UnixNano())
 	sec := rand.Int63n(delta) + min
 	return time.Unix(sec, 0)
 }
@@ -27,6 +26,9 @@ func GetRndPhone() int {
 }
 
 func GetRndNumber(min int, max int) int {
-	rand.Seed(time.Now().UTC().UnixNano())
 	return rand.Intn(max-min) + min
+}
+
+func init() {
+	rand.Seed(time.Now().UTC().UnixNano())
 }

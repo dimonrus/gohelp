@@ -1,6 +1,6 @@
 package gohelp
 
-// Stack of bytes
+// ByteStack Stack of bytes
 type ByteStack [][]byte
 
 // Pop value

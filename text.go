@@ -7,7 +7,6 @@ import (
 	"math/rand"
 	"regexp"
 	"strings"
-	"time"
 )
 
 const Charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -17,10 +16,9 @@ var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
 var matchUUIDPattern = regexp.MustCompile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$")
 
 func RandString(length int) string {
-	source := rand.NewSource(time.Now().UnixNano())
 	b := make([]byte, length)
 	for i := range b {
-		b[i] = Charset[source.Int63()%int64(len(Charset))]
+		b[i] = Charset[rand.Int63()%int64(len(Charset))]
 	}
 	return string(b)
 }
