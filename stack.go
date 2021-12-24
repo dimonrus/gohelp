@@ -1,18 +1,17 @@
 package gohelp
 
-// ByteStack Stack of bytes
-type ByteStack [][]byte
+// Stack of any type
+type Stack[T any] []T
 
 // Pop value
-func (s ByteStack) Pop() ([]byte, ByteStack) {
+func (s Stack[T]) Pop() (T, bool, Stack[T]) {
 	if len(s) > 0 {
-		return s[len(s)-1], s[:len(s)-1]
+		return s[len(s)-1], true, s[:len(s)-1]
 	}
-	return nil, s
+	return *new(T), false, s
 }
 
 // Push value
-func (s ByteStack) Push(v []byte) ByteStack {
+func (s Stack[T]) Push(v T) Stack[T] {
 	return append(s, v)
 }
-
