@@ -1,5 +1,7 @@
 package gohelp
 
+import "fmt"
+
 const (
 	AnsiReset = "\x1b[0m"
 
@@ -34,3 +36,38 @@ const (
 	AnsiCursorRight = "\x1b[%vC"
 	AnsiCursorLeft  = "\x1b[%vD"
 )
+
+// Red wrap into red color
+func Red(v interface{}) string {
+	return AnsiRed + fmt.Sprintf("%v", v) + AnsiReset
+}
+
+// Yellow wrap into yellow color
+func Yellow(v interface{}) string {
+	return AnsiYellow + fmt.Sprintf("%v", v) + AnsiReset
+}
+
+// Green wrap into green color
+func Green(v interface{}) string {
+	return AnsiGreen + fmt.Sprintf("%v", v) + AnsiReset
+}
+
+// Blue wrap into blue color
+func Blue(v interface{}) string {
+	return AnsiBlue + fmt.Sprintf("%v", v) + AnsiReset
+}
+
+// Magenta wrap into magenta color
+func Magenta(v interface{}) string {
+	return AnsiMagenta + fmt.Sprintf("%v", v) + AnsiReset
+}
+
+// Cyan wrap into cyan color
+func Cyan(v interface{}) string {
+	return AnsiCyan + fmt.Sprintf("%v", v) + AnsiReset
+}
+
+// Underline wrap into underline text
+func Underline(v interface{}) string {
+	return AnsiUnderline + fmt.Sprintf("%v", v) + AnsiReset
+}
