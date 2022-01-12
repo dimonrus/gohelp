@@ -67,3 +67,22 @@ func BenchmarkStackByte(b *testing.B) {
 	}
 	b.ReportAllocs()
 }
+
+func BenchmarkStack_Pop(b *testing.B) {
+	type Simple struct {
+		Foo string
+		Bar int
+	}
+	items := []Simple{{Foo: "Foo", Bar: 0}, {Foo: "Foo1", Bar: 1}, {Foo: "Foo2", Bar: 2}, {Foo: "Foo3", Bar: 3}, {Foo: "Foo4", Bar: 4}}
+	s := Stack[Simple]{}
+	for i := 0; i < b.N; i++ {
+		for _, item := range items {
+			s = s.Push(item)
+		}
+		var hasItem = true
+		for hasItem {
+			_, hasItem, s = s.Pop()
+		}
+	}
+	b.ReportAllocs()
+}
