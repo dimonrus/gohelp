@@ -4,6 +4,16 @@ import (
 	"fmt"
 )
 
+// Index return index of item if exists. -1 if not
+func Index[T comparable](value T, slice []T) int {
+	for i, a := range slice {
+		if a == value {
+			return i
+		}
+	}
+	return -1
+}
+
 // ExistsInArray Check if item exists in slice
 func ExistsInArray[T comparable](value T, slice []T) bool {
 	for _, a := range slice {

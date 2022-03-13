@@ -5,6 +5,30 @@ import (
 	"testing"
 )
 
+func TestIndex(t *testing.T) {
+	t.Run("index_1", func(t *testing.T) {
+		var slice = []int32{10, 20, 20, 30, 40, 40, 70}
+		if Index(20, slice) != 1 {
+			t.Fatal("index_1 index must be 1")
+		}
+	})
+
+	t.Run("index_m1", func(t *testing.T) {
+		var slice = []int32{10, 20, 20, 30, 40, 40, 70}
+		if Index(21, slice) != -1 {
+			t.Fatal("index_m1 index must be -1")
+		}
+	})
+
+	t.Run("index_6", func(t *testing.T) {
+		var slice = []int32{10, 20, 20, 30, 40, 40, 70}
+		if Index(70, slice) != 6 {
+			t.Fatal("index_6 index must be 6")
+		}
+	})
+
+}
+
 func TestExistsInArray(t *testing.T) {
 	t.Run("int32", func(t *testing.T) {
 		var slice = []int32{10, 20, 20, 30, 40, 40, 70}
