@@ -2,7 +2,6 @@ package gohelp
 
 import (
 	crand "crypto/rand"
-	"errors"
 	"fmt"
 	"math/rand"
 	"regexp"
@@ -11,8 +10,6 @@ import (
 
 const Charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
-var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
 var matchUUIDPattern = regexp.MustCompile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$")
 
 func RandString(length int) string {
@@ -56,7 +53,7 @@ func (u *UUID) IsValid() bool {
 }
 
 func ParseUUID(data string) *UUID {
-	uuid := &UUID{value:&data}
+	uuid := &UUID{value: &data}
 	if uuid.IsValid() {
 		return uuid
 	}
@@ -64,38 +61,40 @@ func ParseUUID(data string) *UUID {
 }
 
 func ToUnderscore(str string) string {
-	underscore := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
-	underscore = matchAllCap.ReplaceAllString(underscore, "${1}_${2}")
-	return strings.ToLower(underscore)
+	var buf strings.Builder
+	for _, c := range str {
+		if 'A' <= c && c <= 'Z' {
+			if buf.Len() > 0 {
+				buf.WriteRune('_')
+			}
+			buf.WriteRune(c - 'A' + 'a')
+		} else {
+			buf.WriteRune(c)
+		}
+	}
+	return buf.String()
 }
 
-func ToCamelCase(str string, isFirstTitle bool) (string, error) {
-	var result string
-	reg, _ := regexp.Compile(`[a-z0-9]+(_[a-z0-9]+)*`)
-	regs, _ := regexp.Compile(`\s*`)
-	matches := reg.FindStringSubmatch(strings.ToLower(str))
-
-	if len(matches) > 0 {
-		keys := strings.Split(matches[0], "_")
-		var titled string
-		if isFirstTitle {
-			titled = strings.Join(keys, " ")
-		} else {
-			titled = strings.Join(keys[1:], " ")
+func ToCamelCase(str string, isFirstTitle bool) string {
+	var buf strings.Builder
+	for i, c := range str {
+		if 'a' <= c && c <= 'z' {
+			if buf.Len() == 0 {
+				if isFirstTitle {
+					buf.WriteRune(c - 'a' + 'A')
+				} else {
+					buf.WriteRune(c)
+				}
+			} else {
+				if str[i-1] == '_' {
+					buf.WriteRune(c - 'a' + 'A')
+				} else {
+					buf.WriteRune(c)
+				}
+			}
 		}
-		str := reg.ReplaceAllStringFunc(titled, func(s string) string {
-			return strings.Title(s)
-		})
-		str = regs.ReplaceAllString(str, "")
-		if !isFirstTitle {
-			result = keys[0] + str
-		} else {
-			result = str
-		}
-	} else {
-		return "", errors.New("wrong string passed")
 	}
-	return result, nil
+	return buf.String()
 }
 
 func BeforeString(source string, substr string) string {
