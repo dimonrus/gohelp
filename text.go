@@ -92,6 +92,16 @@ func ToCamelCase(str string, isFirstTitle bool) string {
 					buf.WriteRune(c)
 				}
 			}
+		} else if 'A' <= c && c <= 'Z' {
+			if buf.Len() == 0 {
+				if isFirstTitle {
+					buf.WriteRune(c)
+				} else {
+					buf.WriteRune(c + 'a' - 'A')
+				}
+			} else {
+				buf.WriteRune(c)
+			}
 		}
 	}
 	return buf.String()

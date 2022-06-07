@@ -39,6 +39,31 @@ func TestToCamelCase(t *testing.T) {
 		t.Fatal("Incorrect convertation")
 	}
 
+	underscored = "SomeName"
+	str = ToCamelCase(underscored, true)
+	if str != "SomeName" {
+		t.Fatal("Incorrect convertation")
+	}
+
+	underscored = "SomeName"
+	str = ToCamelCase(underscored, false)
+	if str != "someName" {
+		t.Fatal("Incorrect convertation")
+	}
+
+	underscored = "Some_Name"
+	str = ToCamelCase(underscored, false)
+	if str != "someName" {
+		t.Fatal("Incorrect convertation")
+	}
+
+	underscored = "Some_Name"
+	str = ToCamelCase(underscored, true)
+	if str != "SomeName" {
+		t.Fatal("Incorrect convertation")
+	}
+
+	underscored = "some_underscore_name"
 	str = ToCamelCase(underscored, false)
 	if str != "someUnderscoreName" {
 		t.Fatal("Incorrect convertation")
