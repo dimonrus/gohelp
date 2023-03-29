@@ -1,17 +1,14 @@
 package gohelp
 
 import (
-	crand "crypto/rand"
-	"fmt"
+	"errors"
 	"math/rand"
-	"regexp"
 	"strings"
 )
 
 const Charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-var matchUUIDPattern = regexp.MustCompile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$")
-
+// RandString create random string
 func RandString(length int) string {
 	b := make([]byte, length)
 	for i := range b {
@@ -20,46 +17,7 @@ func RandString(length int) string {
 	return string(b)
 }
 
-type UUID struct {
-	value *string
-}
-
-func NewUUID() string {
-	return *(&UUID{}).Generate().Get()
-}
-
-func (u *UUID) Generate() *UUID {
-	b := make([]byte, 16)
-	_, err := crand.Read(b)
-	if err != nil {
-		return nil
-	}
-	uuid := fmt.Sprintf("%X-%X-%X-%X-%X", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
-	u.value = &uuid
-	return u
-}
-
-func (u *UUID) Reset() *UUID {
-	u.value = nil
-	return u
-}
-
-func (u *UUID) Get() *string {
-	return u.value
-}
-
-func (u *UUID) IsValid() bool {
-	return matchUUIDPattern.MatchString(*u.Get())
-}
-
-func ParseUUID(data string) *UUID {
-	uuid := &UUID{value: &data}
-	if uuid.IsValid() {
-		return uuid
-	}
-	return nil
-}
-
+// ToUnderscore transform string to underscore case
 func ToUnderscore(str string) string {
 	var buf strings.Builder
 	for _, c := range str {
@@ -75,6 +33,7 @@ func ToUnderscore(str string) string {
 	return buf.String()
 }
 
+// ToCamelCase transform to camelCase
 func ToCamelCase(str string, isFirstTitle bool) string {
 	var buf strings.Builder
 	for i, c := range str {
@@ -107,6 +66,7 @@ func ToCamelCase(str string, isFirstTitle bool) string {
 	return buf.String()
 }
 
+// BeforeString get string in source before substring
 func BeforeString(source string, substr string) string {
 	// Get substring before a string.
 	pos := strings.Index(source, substr)
@@ -114,4 +74,34 @@ func BeforeString(source string, substr string) string {
 		return ""
 	}
 	return source[0:pos]
+}
+
+// CheckBracers check if bracers is corrects
+func CheckBracers(source string, stack Stack[byte]) error {
+	for _, s := range source {
+		switch s {
+		case '{', '[', '(':
+			stack = stack.Push(byte(s))
+		case ']', '}', ')':
+			var exists bool
+			var bracer byte
+			bracer, exists, stack = stack.Pop()
+			if !exists {
+				return errors.New("incorrect closed bracers count")
+			}
+			if bracer == '{' && s != '}' {
+				return errors.New("incorrect figure bracer found")
+			}
+			if bracer == '[' && s != ']' {
+				return errors.New("incorrect square pair bracer found")
+			}
+			if bracer == '(' && s != ')' {
+				return errors.New("incorrect circle pair bracer found")
+			}
+		}
+	}
+	if len(stack) != 0 {
+		return errors.New("incorrect bracers count")
+	}
+	return nil
 }
