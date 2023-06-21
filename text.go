@@ -2,7 +2,6 @@ package gohelp
 
 import (
 	"errors"
-	"math/rand"
 	"strings"
 )
 
@@ -12,58 +11,60 @@ const Charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 func RandString(length int) string {
 	b := make([]byte, length)
 	for i := range b {
-		b[i] = Charset[rand.Int63()%int64(len(Charset))]
+		b[i] = Charset[rnd.Int63()%int64(len(Charset))]
 	}
 	return string(b)
 }
 
 // ToUnderscore transform string to underscore case
 func ToUnderscore(str string) string {
-	var buf strings.Builder
+	var buf = make([]byte, 0, len(str)+8)
 	for _, c := range str {
 		if 'A' <= c && c <= 'Z' {
-			if buf.Len() > 0 {
-				buf.WriteRune('_')
+			if len(buf) > 0 {
+				buf = append(buf, '_')
 			}
-			buf.WriteRune(c - 'A' + 'a')
+			buf = append(buf, byte(c-'A'+'a'))
 		} else {
-			buf.WriteRune(c)
+			buf = append(buf, byte(c))
 		}
 	}
-	return buf.String()
+	return Convert[[]byte, string](buf)
 }
 
 // ToCamelCase transform to camelCase
 func ToCamelCase(str string, isFirstTitle bool) string {
-	var buf strings.Builder
+	var buf = make([]byte, 0, len(str))
 	for i, c := range str {
 		if 'a' <= c && c <= 'z' {
-			if buf.Len() == 0 {
+			if len(buf) == 0 {
 				if isFirstTitle {
-					buf.WriteRune(c - 'a' + 'A')
+					buf = append(buf, byte(c-'a'+'A'))
 				} else {
-					buf.WriteRune(c)
+					buf = append(buf, byte(c))
 				}
 			} else {
 				if str[i-1] == '_' {
-					buf.WriteRune(c - 'a' + 'A')
+					buf = append(buf, byte(c-'a'+'A'))
 				} else {
-					buf.WriteRune(c)
+					buf = append(buf, byte(c))
 				}
 			}
 		} else if 'A' <= c && c <= 'Z' {
-			if buf.Len() == 0 {
+			if len(buf) == 0 {
 				if isFirstTitle {
-					buf.WriteRune(c)
+					buf = append(buf, byte(c))
 				} else {
-					buf.WriteRune(c + 'a' - 'A')
+					buf = append(buf, byte(c+'a'-'A'))
 				}
 			} else {
-				buf.WriteRune(c)
+				buf = append(buf, byte(c))
 			}
+		} else if '0' <= c && c <= '9' {
+			buf = append(buf, byte(c))
 		}
 	}
-	return buf.String()
+	return Convert[[]byte, string](buf)
 }
 
 // BeforeString get string in source before substring

@@ -7,29 +7,82 @@ import (
 
 func TestUUID(t *testing.T) {
 	uuid := UUID{}
-
 	if uuid.Generate().Get() == nil {
 		t.Errorf("Cant create UUID")
 	}
-
 	if *uuid.Generate().Get() == *uuid.Generate().Get() {
 		t.Errorf("Same uuid generated")
 	}
 }
 
 func TestToUnderscore(t *testing.T) {
-	s := "camelCaseString"
-	if ToUnderscore(s) != "camel_case_string" {
-		t.Fatal("to underscore is not works")
-	}
+	t.Run("simple", func(t *testing.T) {
+		s := "camelCaseString"
+		if ToUnderscore(s) != "camel_case_string" {
+			t.Fatal("to underscore is not works")
+		}
+	})
+	t.Run("digits", func(t *testing.T) {
+		s := "camel11Case22String"
+		if ToUnderscore(s) != "camel11_case22_string" {
+			t.Log(ToUnderscore(s))
+			t.Fatal("to underscore is not works")
+		}
+	})
+	t.Run("long_line", func(t *testing.T) {
+		s := "someLongSuperLineprovidedRightNow"
+		if ToUnderscore(s) != "some_long_super_lineprovided_right_now" {
+			t.Log(ToUnderscore(s))
+			t.Fatal("to underscore is not works")
+		}
+	})
+}
+
+func TestToUnderscoreToCamelCase(t *testing.T) {
+	t.Run("forward", func(t *testing.T) {
+		s := "camelCaseString"
+		str := ToUnderscore(s)
+		if ToCamelCase(str, false) != s {
+			t.Fatal("forward")
+		}
+	})
+	t.Run("backward", func(t *testing.T) {
+		s := "came_case_string"
+		str := ToCamelCase(s, false)
+		if ToUnderscore(str) != s {
+			t.Fatal("backward")
+		}
+	})
 }
 
 func BenchmarkToUnderscore(b *testing.B) {
-	s := "camelCaseString"
-	for i := 0; i < b.N; i++ {
-		ToUnderscore(s)
-	}
-	b.ReportAllocs()
+	// goos: darwin
+	// goarch: arm64
+	// pkg: github.com/dimonrus/gohelp
+	// BenchmarkToUnderscore
+	// BenchmarkToUnderscore/simple
+	// BenchmarkToUnderscore/simple-12         	36219216	        32.07 ns/op	      24 B/op	       1 allocs/op
+	b.Run("simple", func(b *testing.B) {
+		s := "camelCaseString"
+		for i := 0; i < b.N; i++ {
+			ToUnderscore(s)
+		}
+		b.ReportAllocs()
+	})
+	// goos: darwin
+	// goarch: arm64
+	// pkg: github.com/dimonrus/gohelp
+	// BenchmarkToUnderscore
+	// BenchmarkToUnderscore/long
+	// BenchmarkToUnderscore/long-12         	21209469	        55.24 ns/op	      48 B/op	       1 allocs/op
+	b.Run("long", func(b *testing.B) {
+		s := "someLongSuperLineprovidedRightNow"
+		for i := 0; i < b.N; i++ {
+			ToUnderscore(s)
+		}
+		b.ReportAllocs()
+	})
+
 }
 
 func TestToCamelCase(t *testing.T) {
@@ -42,6 +95,18 @@ func TestToCamelCase(t *testing.T) {
 	underscored = "SomeName"
 	str = ToCamelCase(underscored, true)
 	if str != "SomeName" {
+		t.Fatal("Incorrect convertation")
+	}
+
+	underscored = "some_Name1"
+	str = ToCamelCase(underscored, true)
+	if str != "SomeName1" {
+		t.Fatal("Incorrect convertation")
+	}
+
+	underscored = "so23me_44_name1"
+	str = ToCamelCase(underscored, true)
+	if str != "So23me44Name1" {
 		t.Fatal("Incorrect convertation")
 	}
 
@@ -223,4 +288,26 @@ func BenchmarkCheckBracers(b *testing.B) {
 		}
 	}
 	b.ReportAllocs()
+}
+
+func TestRandString(t *testing.T) {
+	type args struct {
+		length int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{name: "length10", args: args{length: 10}, want: 10},
+		{name: "length5", args: args{length: 5}, want: 5},
+		{name: "length1", args: args{length: 1}, want: 1},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RandString(tt.args.length); len(got) != tt.want {
+				t.Errorf("RandString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
