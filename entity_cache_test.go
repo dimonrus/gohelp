@@ -101,10 +101,18 @@ func TestEntityCache_Refresh(t *testing.T) {
 		t.Fatal("refresh must not be executed")
 	}
 	cache.SetCallback(RefreshTestEntity)
-	cache.AddItemIds(33, 44)
+	cache.AddItemIds(33, 44, 44)
 	cache.Refresh()
 	if len(cache.GetItemIds()) != 6 {
 		t.Fatal("refresh items must be 6")
+	}
+	cache.SetEntity(55, &TestEntity{
+		Id:      55,
+		Name:    Ptr("new name"),
+		Decimal: Ptr(122.33),
+	})
+	if cache.Len() != 7 {
+		t.Fatal("wrong items count")
 	}
 }
 

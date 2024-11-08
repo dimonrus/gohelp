@@ -82,10 +82,25 @@ func (c *EntityCache[E, T]) SortOrder(s func(a, b *T) bool) []E {
 	return keys
 }
 
+// Len return len of entity map
+func (c *EntityCache[E, T]) Len() int {
+	c.m.RLock()
+	defer c.m.RUnlock()
+	return len(c.entityMap)
+}
+
 // Set entity map
 func (c *EntityCache[E, T]) Set(entityMap map[E]*T) {
 	c.m.Lock()
 	c.entityMap = entityMap
+	c.m.Unlock()
+	return
+}
+
+// SetEntity set single entity
+func (c *EntityCache[E, T]) SetEntity(id E, item *T) {
+	c.m.Lock()
+	c.entityMap[id] = item
 	c.m.Unlock()
 	return
 }
@@ -117,7 +132,7 @@ func (c *EntityCache[E, T]) SetItemIds(id ...E) {
 // AddItemIds add entity ids for refresh
 func (c *EntityCache[E, T]) AddItemIds(id ...E) {
 	c.m.Lock()
-	c.ids = append(c.ids, id...)
+	c.ids = AppendUnique(c.ids, id...)
 	c.m.Unlock()
 	return
 }
