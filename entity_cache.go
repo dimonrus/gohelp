@@ -105,6 +105,14 @@ func (c *EntityCache[E, T]) SetEntity(id E, item *T) {
 	return
 }
 
+// UnSetEntity unset single entity
+func (c *EntityCache[E, T]) UnSetEntity(id E) {
+	c.m.Lock()
+	delete(c.entityMap, id)
+	c.m.Unlock()
+	return
+}
+
 // GetAll get all items
 func (c *EntityCache[E, T]) GetAll() map[E]*T {
 	return c.entityMap
@@ -125,6 +133,25 @@ func (c *EntityCache[E, T]) GetEntity(id E) *T {
 func (c *EntityCache[E, T]) SetItemIds(id ...E) {
 	c.m.Lock()
 	c.ids = id
+	c.m.Unlock()
+	return
+}
+
+// UnSetItemIds unset item ids
+func (c *EntityCache[E, T]) UnSetItemIds(ids ...E) {
+	c.m.Lock()
+	for _, id := range ids {
+		i := Index[E](id, c.ids)
+		if i != -1 {
+			if i == 0 {
+				c.ids = c.ids[1:]
+			} else if i == len(c.ids)-1 {
+				c.ids = c.ids[:i]
+			} else {
+				c.ids = append(c.ids[:i], c.ids[i+1:]...)
+			}
+		}
+	}
 	c.m.Unlock()
 	return
 }

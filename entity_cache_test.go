@@ -131,3 +131,44 @@ func TestEntityCache_SortOrder(t *testing.T) {
 		}
 	})
 }
+
+func TestEntityCache_UnSetEntity(t *testing.T) {
+	itemIds := []int32{10, 12, 13, 15}
+	cache := NewEntityCache[int32, TestEntity](5, RefreshTestEntity)
+	cache.SetItemIds(itemIds...)
+	go func() {
+		cache.Idle(context.Background())
+	}()
+	time.Sleep(time.Second * 1)
+	ids := cache.GetItemIds()
+	if len(ids) != 4 {
+		t.Fatal("wrong refresh item number")
+	}
+	for _, id := range ids {
+		if !ExistsInArray(id, itemIds) {
+			t.Fatal("wrong id in item ids")
+		}
+	}
+	cache.UnSetEntity(10)
+	cache.UnSetItemIds(10)
+	entity := cache.GetEntity(10)
+	if entity != nil {
+		t.Fatal("must be nil")
+	}
+	ids = cache.GetItemIds()
+	if len(ids) != 3 {
+		t.Fatal("wrong item ids")
+	}
+	cache.UnSetEntity(13)
+	cache.UnSetItemIds(13)
+	ids = cache.GetItemIds()
+	if len(ids) != 2 {
+		t.Fatal("wrong item ids")
+	}
+	cache.UnSetEntity(15)
+	cache.UnSetItemIds(15)
+	ids = cache.GetItemIds()
+	if len(ids) != 1 {
+		t.Fatal("wrong item ids")
+	}
+}
