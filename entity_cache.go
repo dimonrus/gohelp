@@ -179,7 +179,29 @@ func (c *EntityCache[E, T]) SetCallback(callback RefreshEntityCallback[E, T]) {
 	c.m.Unlock()
 }
 
+// Map iterator through cache items
+// next - single item callback iterator
+// ordered - means that ids define order for item iterations
+func (c *EntityCache[E, T]) Map(next func(id E, item *T), ordered bool) {
+	c.m.RLock()
+	defer c.m.RUnlock()
+	if ordered {
+		for _, id := range c.ids {
+			next(id, c.entityMap[id])
+		}
+	} else {
+		for e, t := range c.entityMap {
+			next(e, t)
+		}
+	}
+	return
+}
+
 // NewEntityCache create new entity cache
+// E - identifier type
+// T - type of entity cache
+// refreshPeriod - how often will be refresh executed
+// callback - refresh function
 func NewEntityCache[E comparable, T any](refreshPeriod uint16, callback RefreshEntityCallback[E, T], id ...E) *EntityCache[E, T] {
 	return &EntityCache[E, T]{
 		entityMap:     make(map[E]*T),

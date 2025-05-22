@@ -172,3 +172,48 @@ func TestEntityCache_UnSetEntity(t *testing.T) {
 		t.Fatal("wrong item ids")
 	}
 }
+
+func TestEntityCache_Map(t *testing.T) {
+	t.Run("not ordered", func(t *testing.T) {
+		itemIds := []int32{10, 14, 12, 13, 15}
+		cache := NewEntityCache[int32, TestEntity](1, RefreshTestEntity)
+		cache.SetItemIds(itemIds...)
+		cache.Refresh()
+		go func() {
+			cache.Idle(context.Background())
+		}()
+		for i := 0; i < 10; i++ {
+			var itemsIds []int32
+			cache.Map(func(id int32, item *TestEntity) {
+				itemsIds = append(itemsIds, id)
+				time.Sleep(time.Millisecond * 450)
+			}, false)
+			time.Sleep(time.Millisecond * 1100)
+			if len(itemsIds) != 5 {
+				t.Fatal("wrong item count")
+			}
+			t.Log(itemsIds)
+		}
+	})
+	t.Run("ordered", func(t *testing.T) {
+		itemIds := []int32{10, 14, 12, 13, 15}
+		cache := NewEntityCache[int32, TestEntity](1, RefreshTestEntity)
+		cache.SetItemIds(itemIds...)
+		cache.Refresh()
+		go func() {
+			cache.Idle(context.Background())
+		}()
+		for i := 0; i < 10; i++ {
+			var itemsIds []int32
+			cache.Map(func(id int32, item *TestEntity) {
+				itemsIds = append(itemsIds, id)
+				time.Sleep(time.Millisecond * 450)
+			}, true)
+			time.Sleep(time.Millisecond * 1100)
+			if len(itemsIds) != 5 || itemIds[0] != 10 || itemIds[1] != 14 || itemIds[4] != 15 {
+				t.Fatal("wrong item count")
+			}
+			t.Log(itemsIds)
+		}
+	})
+}

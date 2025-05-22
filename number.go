@@ -1,12 +1,8 @@
 package gohelp
 
 import (
-	"math/rand"
 	"time"
 )
-
-// Init rnd source
-var rnd = rand.New(rand.NewSource(time.Now().UTC().UnixNano()))
 
 func GetRndDateTime() time.Time {
 	min := time.Date(2001, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
