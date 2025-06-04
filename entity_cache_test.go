@@ -2,6 +2,7 @@ package gohelp
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math/rand"
 	"testing"
@@ -36,6 +37,10 @@ func RefreshTestEntity(id ...int32) (map[int32]*TestEntity, error) {
 	return result, nil
 }
 
+func RefreshTestEntityError(id ...int32) (map[int32]*TestEntity, error) {
+	return nil, errors.New("test error")
+}
+
 var testEntityMap = map[int32]*TestEntity{
 	1: {Id: 1, Name: Ptr("Первый"), Decimal: Ptr(10.01)},
 	2: {Id: 2, Name: Ptr("Сегодня"), Decimal: Ptr(12.69)},
@@ -53,7 +58,7 @@ func FixedRefreshEntities(id ...int32) (map[int32]*TestEntity, error) {
 
 func TestEntityCache_Idle(t *testing.T) {
 	itemIds := []int32{10, 12, 13, 15}
-	cache := NewEntityCache[int32, TestEntity](5, RefreshTestEntity)
+	cache := NewEntityCache[int32, TestEntity](5, 3, RefreshTestEntity)
 	cache.SetItemIds(itemIds...)
 	go func() {
 		cache.Idle(context.Background())
@@ -72,7 +77,7 @@ func TestEntityCache_Idle(t *testing.T) {
 
 func TestEntityCache_Refresh(t *testing.T) {
 	itemIds := []int32{10, 12, 13, 15}
-	cache := NewEntityCache[int32, TestEntity](5, RefreshTestEntity)
+	cache := NewEntityCache[int32, TestEntity](5, 3, RefreshTestEntity)
 	cache.SetItemIds(itemIds...)
 	cache.Refresh()
 	ids := cache.GetItemIds()
@@ -118,7 +123,7 @@ func TestEntityCache_Refresh(t *testing.T) {
 
 func TestEntityCache_SortOrder(t *testing.T) {
 	t.Run("sort_order", func(t *testing.T) {
-		cache := NewEntityCache[int32, TestEntity](5, FixedRefreshEntities)
+		cache := NewEntityCache[int32, TestEntity](5, 3, FixedRefreshEntities)
 		cache.Refresh()
 		order := cache.SortOrder(func(a, b *TestEntity) bool {
 			return *a.Name < *b.Name
@@ -132,9 +137,33 @@ func TestEntityCache_SortOrder(t *testing.T) {
 	})
 }
 
+func TestRefreshUntilSuccess(t *testing.T) {
+	t.Run("always error", func(t *testing.T) {
+		cache := NewEntityCache[int32, TestEntity](1, 3, RefreshTestEntityError)
+		err := cache.RefreshUntilSuccess()
+		if err == nil {
+			t.Fatal("wait for error")
+		}
+	})
+	t.Run("always panic in idle", func(t *testing.T) {
+		cache := NewEntityCache[int32, TestEntity](1, 3, RefreshTestEntityError)
+		go func() {
+			defer func() {
+				if r := recover(); r != nil {
+					t.Log(r.(error).Error())
+				} else {
+					t.Fatal("must be a panic")
+				}
+			}()
+			cache.Idle(context.Background())
+		}()
+		time.Sleep(time.Second * 5)
+	})
+}
+
 func TestEntityCache_UnSetEntity(t *testing.T) {
 	itemIds := []int32{10, 12, 13, 15}
-	cache := NewEntityCache[int32, TestEntity](5, RefreshTestEntity)
+	cache := NewEntityCache[int32, TestEntity](5, 3, RefreshTestEntity)
 	cache.SetItemIds(itemIds...)
 	go func() {
 		cache.Idle(context.Background())
@@ -176,7 +205,7 @@ func TestEntityCache_UnSetEntity(t *testing.T) {
 func TestEntityCache_Map(t *testing.T) {
 	t.Run("not ordered", func(t *testing.T) {
 		itemIds := []int32{10, 14, 12, 13, 15}
-		cache := NewEntityCache[int32, TestEntity](1, RefreshTestEntity)
+		cache := NewEntityCache[int32, TestEntity](1, 2, RefreshTestEntity)
 		cache.SetItemIds(itemIds...)
 		cache.Refresh()
 		go func() {
@@ -197,7 +226,7 @@ func TestEntityCache_Map(t *testing.T) {
 	})
 	t.Run("ordered", func(t *testing.T) {
 		itemIds := []int32{10, 14, 12, 13, 15}
-		cache := NewEntityCache[int32, TestEntity](1, RefreshTestEntity)
+		cache := NewEntityCache[int32, TestEntity](1, 2, RefreshTestEntity)
 		cache.SetItemIds(itemIds...)
 		cache.Refresh()
 		go func() {

@@ -22,6 +22,8 @@ type EntityCache[E comparable, T any] struct {
 	ids []E
 	// Period until all entity will be refreshed
 	refreshPeriod uint16
+	// Maximum failed refresh attempts before panic
+	maxFailedCount uint16
 }
 
 // Refresh cache function
@@ -44,23 +46,41 @@ func (c *EntityCache[E, T]) Refresh() error {
 	return nil
 }
 
+// RefreshUntilSuccess refresh until c.maxFailedCount
+func (c *EntityCache[E, T]) RefreshUntilSuccess() error {
+	var failedCount uint16
+	for {
+		err := c.Refresh()
+		if err == nil {
+			return nil
+		}
+		if failedCount >= c.maxFailedCount {
+			return err
+		}
+		failedCount++
+		time.Sleep(time.Second * time.Duration(c.refreshPeriod))
+	}
+}
+
 // Idle wait for next time refresh event
 func (c *EntityCache[E, T]) Idle(ctx context.Context) error {
-	e := c.Refresh()
-	if e != nil {
-		return e
-	}
 	duration := time.Second * time.Duration(c.refreshPeriod)
 	ticker := time.NewTicker(duration)
+	var failedCount uint16
 	defer ticker.Stop()
 	for {
 		select {
 		case <-ctx.Done():
 			return nil
 		case <-ticker.C:
-			e = c.Refresh()
+			e := c.Refresh()
 			if e != nil {
-				return e
+				failedCount++
+				if failedCount >= c.maxFailedCount {
+					panic(e)
+				}
+			} else {
+				failedCount = 0
 			}
 		}
 	}
@@ -202,11 +222,12 @@ func (c *EntityCache[E, T]) Map(next func(id E, item *T), ordered bool) {
 // T - type of entity cache
 // refreshPeriod - how often will be refresh executed
 // callback - refresh function
-func NewEntityCache[E comparable, T any](refreshPeriod uint16, callback RefreshEntityCallback[E, T], id ...E) *EntityCache[E, T] {
+func NewEntityCache[E comparable, T any](refreshPeriod, maxFailedCount uint16, callback RefreshEntityCallback[E, T], id ...E) *EntityCache[E, T] {
 	return &EntityCache[E, T]{
-		entityMap:     make(map[E]*T),
-		refresh:       callback,
-		ids:           id,
-		refreshPeriod: refreshPeriod,
+		entityMap:      make(map[E]*T),
+		refresh:        callback,
+		ids:            id,
+		refreshPeriod:  refreshPeriod,
+		maxFailedCount: maxFailedCount,
 	}
 }
