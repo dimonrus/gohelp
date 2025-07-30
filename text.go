@@ -77,7 +77,7 @@ func BeforeString(source string, substr string) string {
 	return source[0:pos]
 }
 
-// CheckBracers check if bracers is corrects
+// CheckBracers check if bracers are correct
 func CheckBracers(source string, stack Stack[byte]) error {
 	for _, s := range source {
 		switch s {
@@ -105,4 +105,56 @@ func CheckBracers(source string, stack Stack[byte]) error {
 		return errors.New("incorrect bracers count")
 	}
 	return nil
+}
+
+// CheckTypeOf check value for type
+// 00001111
+// - 1 - uint
+// - 2 - int
+// - 4 - float
+// - 8 - string
+func CheckTypeOf(value []byte) (isUint, isInt, isFloat, isBool, isString bool) {
+	var valueType uint8
+	for _, b := range value {
+		if b >= '0' && b <= '9' {
+			valueType = valueType | 1
+		} else if b == '-' {
+			if valueType >= 1 {
+				valueType ^= 8
+			}
+			valueType = valueType | 2
+		} else if b == '.' {
+			if valueType >= 4 {
+				valueType ^= 8
+			}
+			valueType = valueType | 4
+		} else {
+			valueType = valueType | 8
+		}
+	}
+	if valueType&8 == 8 {
+		lower := strings.ToLower(string(value))
+		if lower == "true" || lower == "false" {
+			isBool = true
+			return
+		}
+		isString = true
+		return
+	}
+	if valueType&4 == 4 {
+		isFloat = true
+		return
+	}
+	if valueType&2 == 2 {
+		isInt = true
+		return
+	}
+	if valueType&1 == 1 {
+		isUint = true
+		return
+	}
+	if valueType == 0 {
+		isString = true
+	}
+	return
 }

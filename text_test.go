@@ -2,6 +2,7 @@ package gohelp
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 )
 
@@ -310,4 +311,249 @@ func TestRandString(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestCheckValueType(t *testing.T) {
+	t.Run("uint", func(t *testing.T) {
+		num := "1234"
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isUint {
+			t.Fatal("must be uint")
+		}
+		if isInt || isFloat || isBool || isString {
+			t.Fatal("must be uint, not other")
+		}
+	})
+	t.Run("uint with zero", func(t *testing.T) {
+		num := "001234"
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isUint {
+			t.Fatal("must be uint")
+		}
+		if isInt || isFloat || isBool || isString {
+			t.Fatal("must be uint, not other")
+		}
+		u64, err := strconv.ParseUint(num, 10, 64)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if u64 != 1234 {
+			t.Fatal("must be 1234 uint64")
+		}
+		t.Log(u64)
+	})
+	t.Run("int", func(t *testing.T) {
+		num := "-1234"
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isInt {
+			t.Fatal("must be int")
+		}
+		if isUint || isFloat || isBool || isString {
+			t.Fatal("must be int, not other")
+		}
+		i64, err := strconv.ParseInt(num, 10, 64)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if i64 != -1234 {
+			t.Fatal("must be -1234 int")
+		}
+		t.Log(i64)
+	})
+	t.Run("int with zero", func(t *testing.T) {
+		num := "0-1234"
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isString {
+			t.Fatal("must be string")
+		}
+		if isUint || isFloat || isBool || isInt {
+			t.Fatal("must be string, not other")
+		}
+		_, err := strconv.ParseInt(num, 10, 64)
+		if err == nil {
+			t.Fatal("must be error")
+		}
+	})
+	t.Run("double minus", func(t *testing.T) {
+		num := "-12-34"
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isString {
+			t.Fatal("must be string")
+		}
+		if isUint || isFloat || isBool || isInt {
+			t.Fatal("must be string, not other")
+		}
+		_, err := strconv.ParseInt(num, 10, 64)
+		if err == nil {
+			t.Fatal("must be error")
+		}
+	})
+	t.Run("double minus from starts", func(t *testing.T) {
+		num := "--1234"
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isString {
+			t.Fatal("must be string")
+		}
+		if isUint || isFloat || isBool || isInt {
+			t.Fatal("must be string, not other")
+		}
+		_, err := strconv.ParseInt(num, 10, 64)
+		if err == nil {
+			t.Fatal("must be error")
+		}
+	})
+	t.Run("bool", func(t *testing.T) {
+		num := "true"
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isBool {
+			t.Fatal("must be bool")
+		}
+		if isUint || isFloat || isString || isInt {
+			t.Fatal("must be bool, not other")
+		}
+		val, err := strconv.ParseBool(num)
+		if err != nil {
+			t.Fatal("must be true")
+		}
+		if !val {
+			t.Fatal("must be true")
+		}
+	})
+	t.Run("bool false", func(t *testing.T) {
+		num := "false"
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isBool {
+			t.Fatal("must be bool")
+		}
+		if isUint || isFloat || isString || isInt {
+			t.Fatal("must be bool, not other")
+		}
+		val, err := strconv.ParseBool(num)
+		if err != nil {
+			t.Fatal("must be true")
+		}
+		if val {
+			t.Fatal("must be true")
+		}
+	})
+	t.Run("bool false", func(t *testing.T) {
+		num := "0false"
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isString {
+			t.Fatal("must be string")
+		}
+		if isUint || isFloat || isBool || isInt {
+			t.Fatal("must be string, not other")
+		}
+	})
+	t.Run("float", func(t *testing.T) {
+		num := "-.342"
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isFloat {
+			t.Fatal("must be float")
+		}
+		if isUint || isString || isBool || isInt {
+			t.Fatal("must be float, not other")
+		}
+		val, err := strconv.ParseFloat(num, 64)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if val != -0.342 {
+			t.Fatal("must be true")
+		}
+	})
+	t.Run("float", func(t *testing.T) {
+		num := ".342"
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isFloat {
+			t.Fatal("must be float")
+		}
+		if isUint || isString || isBool || isInt {
+			t.Fatal("must be float, not other")
+		}
+		val, err := strconv.ParseFloat(num, 64)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if val != 0.342 {
+			t.Fatal("must be true")
+		}
+	})
+	t.Run("float", func(t *testing.T) {
+		num := "0.342"
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isFloat {
+			t.Fatal("must be float")
+		}
+		if isUint || isString || isBool || isInt {
+			t.Fatal("must be float, not other")
+		}
+		val, err := strconv.ParseFloat(num, 64)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if val != 0.342 {
+			t.Fatal("must be true")
+		}
+	})
+	t.Run("float", func(t *testing.T) {
+		num := "0.-342"
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isString {
+			t.Fatal("must be string")
+		}
+		if isUint || isFloat || isBool || isInt {
+			t.Fatal("must be string, not other")
+		}
+	})
+	t.Run("float", func(t *testing.T) {
+		num := "0.342."
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isString {
+			t.Fatal("must be string")
+		}
+		if isUint || isFloat || isBool || isInt {
+			t.Fatal("must be string, not other")
+		}
+	})
+	t.Run("float", func(t *testing.T) {
+		num := "0342."
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(num))
+		if !isFloat {
+			t.Fatal("must be float")
+		}
+		if isUint || isString || isBool || isInt {
+			t.Fatal("must be float, not other")
+		}
+		val, err := strconv.ParseFloat(num, 64)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if val != 342 {
+			t.Fatal("must be true")
+		}
+	})
+	t.Run("empty", func(t *testing.T) {
+		isUint, isInt, isFloat, isBool, isString := CheckTypeOf([]byte(""))
+		if !isString {
+			t.Fatal("must be string")
+		}
+		if isUint || isFloat || isBool || isInt {
+			t.Fatal("must be string, not other")
+		}
+	})
+}
+
+// goos: darwin
+// goarch: arm64
+// pkg: github.com/dimonrus/gohelp
+// cpu: Apple M2 Max
+// BenchmarkCheckValueType
+// BenchmarkCheckValueType-12    	298244180	         4.025 ns/op	       0 B/op	       0 allocs/op
+func BenchmarkCheckValueType(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		CheckTypeOf([]byte("-1234"))
+	}
+	b.ReportAllocs()
 }
