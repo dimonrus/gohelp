@@ -217,6 +217,32 @@ func (c *EntityCache[E, T]) Map(next func(id E, item *T), ordered bool) {
 	return
 }
 
+// Filter items thread safe
+// searchable - list of ids to iteration. if len(searchable) == 0 then iteration over entityMap
+// compare - is item satisfies for search condition
+// result - list of resulted items
+func (c *EntityCache[E, T]) Filter(searchable []E, compare func(item *T) bool) (result []*T) {
+	c.m.RLock()
+	defer c.m.RUnlock()
+	if len(searchable) > 0 {
+		result = make([]*T, 0, len(searchable))
+		for _, id := range searchable {
+			v, ok := c.entityMap[id]
+			if ok && compare(v) {
+				result = append(result, v)
+			}
+		}
+	} else {
+		result = make([]*T, 0, len(c.entityMap))
+		for _, t := range c.entityMap {
+			if compare(t) {
+				result = append(result, t)
+			}
+		}
+	}
+	return result
+}
+
 // NewEntityCache create new entity cache
 // E - identifier type
 // T - type of entity cache

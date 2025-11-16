@@ -246,3 +246,67 @@ func TestEntityCache_Map(t *testing.T) {
 		}
 	})
 }
+
+func TestEntityCache_Filter(t *testing.T) {
+	t.Run("simple", func(t *testing.T) {
+		itemIds := []int32{10, 14, 12, 13, 15}
+		cache := NewEntityCache[int32, TestEntity](1, 2, RefreshTestEntity)
+		cache.SetItemIds(itemIds...)
+		cache.Refresh()
+		result := cache.Filter([]int32{10, 14, 12}, func(item *TestEntity) bool {
+			if item.Id > 13 {
+				return false
+			}
+			if item.Name == nil || len(*item.Name) < 5 {
+				return false
+			}
+			return true
+		})
+		if len(result) != 2 {
+			t.Fatal("wrong filter")
+		}
+		if result[0].Id != 10 {
+			t.Fatal("wrong filter iteration")
+		}
+	})
+	t.Run("all search", func(t *testing.T) {
+		itemIds := []int32{10, 14, 12, 13, 15}
+		cache := NewEntityCache[int32, TestEntity](1, 2, RefreshTestEntity)
+		cache.SetItemIds(itemIds...)
+		cache.Refresh()
+		result := cache.Filter(nil, func(item *TestEntity) bool {
+			if item.Id > 13 {
+				return false
+			}
+			if item.Name == nil || len(*item.Name) < 5 {
+				return false
+			}
+			return true
+		})
+		if len(result) != 3 {
+			t.Fatal("wrong filter")
+		}
+		if result[2].Id != 13 {
+			t.Fatal("wrong filter iteration")
+		}
+	})
+}
+
+func BenchmarkEntityCache_Filter(b *testing.B) {
+	itemIds := []int32{10, 14, 12, 13, 15}
+	cache := NewEntityCache[int32, TestEntity](1, 2, RefreshTestEntity)
+	cache.SetItemIds(itemIds...)
+	cache.Refresh()
+	for i := 0; i < b.N; i++ {
+		cache.Filter([]int32{10, 14, 12}, func(item *TestEntity) bool {
+			if item.Id > 13 {
+				return false
+			}
+			if item.Name == nil || len(*item.Name) < 5 {
+				return false
+			}
+			return true
+		})
+	}
+	b.ReportAllocs()
+}
