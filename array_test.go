@@ -324,3 +324,170 @@ func TestEach(t *testing.T) {
 		fmt.Println(s.One, s.Two)
 	})
 }
+
+func uniqueCompare(a, b []int32) (common []int32, removed []int32, added []int32) {
+	if len(b) == 0 {
+		return
+	}
+	for _, va := range a {
+		var found bool
+		for _, vb := range b {
+			if va == vb {
+				common = AppendUnique(common, va)
+				found = true
+				break
+			}
+		}
+		if !found {
+			removed = AppendUnique(removed, va)
+		}
+	}
+	for _, vb := range b {
+		var found bool
+		for _, va := range a {
+			if va == vb {
+				found = true
+				break
+			}
+		}
+		if !found {
+			added = AppendUnique(added, vb)
+		}
+	}
+	return
+}
+
+func TestUniqueCompare(t *testing.T) {
+	t.Run("simple", func(t *testing.T) {
+		a := []int32{10, 2, 3, 4, 7, 8, 9, 2, 3}
+		b := []int32{1, 3, 44, 11, 9, 11}
+		a1, b1, c1 := uniqueCompare(a, b)
+		t.Log(a1, b1, c1)
+		a, b, c := UniqueCompare(a, b)
+		t.Log(a, b, c)
+		if len(a1) != len(a) {
+			t.Fatal("wrong common")
+		}
+		if a1[0] != a[0] {
+			t.Fatal("wrong common first")
+		}
+		if a1[1] != a[1] {
+			t.Fatal("wrong common last")
+		}
+
+		if len(b1) != len(b) {
+			t.Fatal("wrong removed")
+		}
+		if b1[0] != b[0] {
+			t.Fatal("wrong removed first")
+		}
+		if b1[4] != b[4] {
+			t.Fatal("wrong removed last")
+		}
+
+		if len(c1) != len(c) {
+			t.Fatal("wrong added")
+		}
+		if c1[0] != c[0] {
+			t.Fatal("wrong added first")
+		}
+		if c1[2] != c[2] {
+			t.Fatal("wrong added last")
+		}
+	})
+	t.Run("left", func(t *testing.T) {
+		a := []int32{10, 2}
+		b := []int32{}
+		a1, b1, c1 := uniqueCompare(a, b)
+		t.Log(a1, b1, c1)
+		a, b, c := UniqueCompare(a, b)
+		t.Log(a, b, c)
+		if len(a1) != len(a) {
+			t.Fatal("wrong common")
+		}
+		if len(a) != 0 {
+			t.Fatal("wrong common")
+		}
+		if len(b) != 0 {
+			t.Fatal("wrong removed")
+		}
+		if len(c) != 0 {
+			t.Fatal("wrong added")
+		}
+	})
+	t.Run("right", func(t *testing.T) {
+		a := []int32{}
+		b := []int32{10, 2}
+		a1, b1, c1 := uniqueCompare(a, b)
+		t.Log(a1, b1, c1)
+		a, b, c := UniqueCompare(a, b)
+		t.Log(a, b, c)
+		if len(a1) != len(a) {
+			t.Fatal("wrong common")
+		}
+		if len(a) != 0 {
+			t.Fatal("wrong common")
+		}
+		if len(b) != 0 {
+			t.Fatal("wrong removed")
+		}
+		if len(c) != 2 {
+			t.Fatal("wrong added")
+		}
+	})
+	t.Run("all unique", func(t *testing.T) {
+		a := []int32{1}
+		b := []int32{10, 2, 3}
+		a1, b1, c1 := uniqueCompare(a, b)
+		t.Log(a1, b1, c1)
+		a, b, c := UniqueCompare(a, b)
+		t.Log(a, b, c)
+		if len(a1) != len(a) {
+			t.Fatal("wrong common")
+		}
+		if len(a) != 0 {
+			t.Fatal("wrong common")
+		}
+		if len(b) != 1 {
+			t.Fatal("wrong removed")
+		}
+		if len(c) != 3 {
+			t.Fatal("wrong added")
+		}
+	})
+	t.Run("equal", func(t *testing.T) {
+		a := []int32{10}
+		b := []int32{10}
+		a1, b1, c1 := uniqueCompare(a, b)
+		t.Log(a1, b1, c1)
+		a, b, c := UniqueCompare(a, b)
+		t.Log(a, b, c)
+		if len(a1) != len(a) {
+			t.Fatal("wrong common")
+		}
+		if len(a) != 1 {
+			t.Fatal("wrong common")
+		}
+		if len(b) != 0 {
+			t.Fatal("wrong removed")
+		}
+		if len(c) != 0 {
+			t.Fatal("wrong added")
+		}
+	})
+}
+
+// goos: darwin
+// goarch: amd64
+// pkg: github.com/dimonrus/gohelp
+// cpu: Intel(R) Core(TM) i5-8279U CPU @ 2.40GHz
+// BenchmarkUniqueCompare
+// BenchmarkUniqueCompare-8   	 7682722	       166.6 ns/op	     192 B/op	       1 allocs/op
+func BenchmarkUniqueCompare(b *testing.B) {
+	a1 := []int{10, 2, 3, 4, 7, 8, 9, 2, 3}
+	b1 := []int{1, 3, 44, 11, 9, 11}
+	for i := 0; i < b.N; i++ {
+		UniqueCompare(a1, b1)
+	}
+	b.ReportAllocs()
+}

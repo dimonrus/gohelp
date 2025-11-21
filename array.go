@@ -128,3 +128,52 @@ func Each[S any](s []S, callback func(S)) {
 	}
 	return
 }
+
+// UniqueCompare Unique compare unique values between arrays
+func UniqueCompare[S comparable](left []S, right []S) (common []S, removed []S, added []S) {
+	if len(right) == 0 {
+		return
+	}
+	var ll, lr = len(left), len(right)
+	var result = make([]S, ll*2+lr)
+	var ic, ir, id int
+	ir = ll
+	id = ll * 2
+	for _, ia := range left {
+		var found bool
+		for _, ib := range right {
+			if ia == ib {
+				if !ExistsInArray[S](ia, result[:ic]) {
+					result[ic] = ia
+					ic++
+				}
+				found = true
+				break
+			}
+		}
+		if found {
+			continue
+		}
+		if !ExistsInArray[S](ia, result[ll:ir]) {
+			result[ir] = ia
+			ir++
+		}
+	}
+	for _, ib := range right {
+		var found bool
+		for _, ia := range left {
+			if ib == ia {
+				found = true
+				break
+			}
+		}
+		if !found && !ExistsInArray[S](ib, result[ll*2:id]) {
+			result[id] = ib
+			id++
+		}
+	}
+	common = result[:ic]
+	removed = result[ll:ir]
+	added = result[ll*2 : id]
+	return
+}
