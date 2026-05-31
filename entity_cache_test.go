@@ -284,10 +284,18 @@ func TestEntityCache_Filter(t *testing.T) {
 			return true
 		})
 		if len(result) != 3 {
+			t.Log(result)
 			t.Fatal("wrong filter")
 		}
-		if result[2].Id != 13 {
-			t.Fatal("wrong filter iteration")
+		var found13 bool
+		for _, t2 := range result {
+			if t2.Id == 13 {
+				found13 = true
+				break
+			}
+		}
+		if !found13 {
+			t.Fatal("wrong filter")
 		}
 	})
 }

@@ -1,29 +1,32 @@
 package gohelp
 
 import (
+	"crypto/rand"
+	"math/big"
 	"time"
 )
 
 func GetRndDateTime() time.Time {
-	min := time.Date(2001, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
-	max := time.Date(2018, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
-	delta := max - min
-	sec := rnd.Int63n(delta) + min
-	return time.Unix(sec, 0)
+	minimum := int(time.Date(2001, 1, 0, 0, 0, 0, 0, time.UTC).Unix())
+	maximum := int(time.Date(2018, 1, 0, 0, 0, 0, 0, time.UTC).Unix())
+	return time.Unix(int64(GetRndNumber(minimum, maximum)), 0)
 }
 
 func GetRndId() int {
-	min := 77770000000
-	max := 87770000000
-	return GetRndNumber(min, max)
+	minimum := 77770000000
+	maximum := 87770000000
+	return GetRndNumber(minimum, maximum)
 }
 
 func GetRndPhone() int {
-	min := 1000000000
-	max := 2000000000
-	return GetRndNumber(min, max)
+	minimum := 1000000000
+	maximum := 2000000000
+	return GetRndNumber(minimum, maximum)
 }
 
 func GetRndNumber(min int, max int) int {
-	return rnd.Intn(max-min) + min
+	rangeLimit := big.NewInt(int64(max - min + 1))
+	n, _ := rand.Int(rand.Reader, rangeLimit)
+	result := n.Int64() + int64(min)
+	return int(result)
 }

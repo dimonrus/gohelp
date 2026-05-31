@@ -11,7 +11,9 @@ const Charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 func RandString(length int) string {
 	b := make([]byte, length)
 	for i := range b {
-		b[i] = Charset[rnd.Int63()%int64(len(Charset))]
+		rnd, _ := RandInt63n()
+		r := rnd % int64(len(Charset))
+		b[i] = Charset[r]
 	}
 	return string(b)
 }
@@ -20,6 +22,9 @@ func RandString(length int) string {
 func ToUnderscore(str string) string {
 	var buf = make([]byte, 0, len(str)+8)
 	for _, c := range str {
+		if c < 0 || c > 255 {
+			continue
+		}
 		if 'A' <= c && c <= 'Z' {
 			if len(buf) > 0 {
 				buf = append(buf, '_')

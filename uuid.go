@@ -1,6 +1,7 @@
 package gohelp
 
 import (
+	"crypto/rand"
 	"fmt"
 	"regexp"
 )
@@ -20,7 +21,7 @@ func NewUUID() string {
 // Generate uuid
 func (u *UUID) Generate() *UUID {
 	b := make([]byte, 16)
-	_, err := rnd.Read(b)
+	_, err := rand.Read(b)
 	if err != nil {
 		return nil
 	}
